@@ -42,7 +42,6 @@ static const struct _openslide_format *formats[] = {
   &_openslide_format_mirax,
   &_openslide_format_hamamatsu_vms_vmu,
   &_openslide_format_hamamatsu_ndpi,
-  &_openslide_format_sakura,
   &_openslide_format_trestle,
   &_openslide_format_aperio,
   &_openslide_format_leica,
@@ -93,6 +92,7 @@ static bool level_in_range(openslide_t *osr, int32_t level) {
 
 static openslide_t *create_osr(void) {
   openslide_t *osr = g_slice_new0(openslide_t);
+  osr->zlevel_count = -1;
   osr->properties = g_hash_table_new_full(g_str_hash, g_str_equal,
                                           g_free, g_free);
   osr->associated_images = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -260,7 +260,9 @@ openslide_t *openslide_open(const char *filename) {
     _openslide_propagate_error(osr, tmp_err);
     return osr;
   }
+
   g_assert(osr->levels);
+  g_assert(osr->zlevels);
 
   // compute downsamples if not done already
   int64_t blw, blh;
@@ -344,8 +346,9 @@ openslide_t *openslide_open(const char *filename) {
   osr->property_names = strv_from_hashtable_keys(osr->properties);
 
   // start cache
-  osr->cache = _openslide_cache_create(_OPENSLIDE_USEFUL_CACHE_SIZE);
-  //osr->cache = _openslide_cache_create(0);
+  //osr->cache = _openslide_cache_create(_OPENSLIDE_USEFUL_CACHE_SIZE);
+  //osr->cache = _openslide_cache_create(512 * 512 * 2);
+  osr->cache = _openslide_cache_create(0);
 
   return osr;
 }

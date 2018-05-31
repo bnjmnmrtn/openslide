@@ -34,6 +34,7 @@
 #include "openslide-decode-jp2k.h"
 #include "openslide-decode-tiff.h"
 #include "openslide-decode-tifflike.h"
+#include "openslide-zstack-private.h"
 
 #include <glib.h>
 #include <string.h>
@@ -436,6 +437,8 @@ static bool aperio_open(openslide_t *osr,
   struct level **levels = NULL;
   int32_t level_count = 0;
 
+  struct zlevel_generator *zlevel_gen = build_generator();
+
   // open TIFF
   struct _openslide_tiffcache *tc = _openslide_tiffcache_create(filename);
   TIFF *tiff = _openslide_tiffcache_get(tc, err);
@@ -555,6 +558,9 @@ static bool aperio_open(openslide_t *osr,
           g_hash_table_insert(l->missing_tiles, p_tile_no, NULL);
         }
       }
+
+	  register_level(zlevel_gen, tiff, &l->base);
+
     } else {
       // associated image
       const char *name = (dir == 1) ? "thumbnail" : NULL;
@@ -607,6 +613,8 @@ static bool aperio_open(openslide_t *osr,
   osr->data = data;
   osr->ops = &aperio_ops;
 
+  generate_zlevels(zlevel_gen, osr);
+
   // put TIFF handle and store tiffcache reference
   _openslide_tiffcache_put(tc, tiff);
   data->tc = tc;
@@ -617,6 +625,7 @@ FAIL:
   destroy_data(data, levels, level_count);
   _openslide_tiffcache_put(tc, tiff);
   _openslide_tiffcache_destroy(tc);
+  destroy_generator(zlevel_gen, true);
   return false;
 }
 

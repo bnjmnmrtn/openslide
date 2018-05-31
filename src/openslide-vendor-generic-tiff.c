@@ -32,6 +32,7 @@
 #include "openslide-private.h"
 #include "openslide-decode-tiff.h"
 #include "openslide-decode-tifflike.h"
+#include "openslide-zstack-private.h"
 
 #include <glib.h>
 #include <string.h>
@@ -193,6 +194,8 @@ static bool generic_tiff_open(openslide_t *osr,
     goto FAIL;
   }
 
+  struct zlevel_generator *zlevel_gen = build_generator();
+
   // accumulate tiled levels
   do {
     // confirm that this directory is tiled
@@ -204,10 +207,6 @@ static bool generic_tiff_open(openslide_t *osr,
     if (TIFFCurrentDirectory(tiff) != 0) {
       uint32_t subfiletype;
       if (!TIFFGetField(tiff, TIFFTAG_SUBFILETYPE, &subfiletype)) {
-        continue;
-      }
-
-      if (!(subfiletype & FILETYPE_REDUCEDIMAGE)) {
         continue;
       }
     }
@@ -245,6 +244,7 @@ static bool generic_tiff_open(openslide_t *osr,
 
     // add to array
     g_ptr_array_add(level_array, l);
+	register_level(zlevel_gen, tiff, &l->base);
   } while (TIFFReadDirectory(tiff));
 
   // sort tiled levels
@@ -277,6 +277,8 @@ static bool generic_tiff_open(openslide_t *osr,
   osr->data = data;
   osr->ops = &generic_tiff_ops;
 
+  generate_zlevels(zlevel_gen, osr);
+
   // put TIFF handle and store tiffcache reference
   _openslide_tiffcache_put(tc, tiff);
   data->tc = tc;
@@ -293,6 +295,9 @@ static bool generic_tiff_open(openslide_t *osr,
     }
     g_ptr_array_free(level_array, true);
   }
+  
+  destroy_generator(zlevel_gen, true);
+
   // free TIFF
   _openslide_tiffcache_put(tc, tiff);
   _openslide_tiffcache_destroy(tc);

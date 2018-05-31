@@ -54,6 +54,7 @@ struct _openslide_associated_image_ops {
 /* the main structure */
 struct _openslide {
   const struct _openslide_ops *ops;
+
   struct _openslide_level **levels;
   void *data;
   int32_t level_count;
@@ -71,6 +72,10 @@ struct _openslide {
 
   // error handling, NULL if no error
   gpointer error; // must use g_atomic_pointer!
+  
+  // z-level containers
+  struct _openslide_zlevel **zlevels;
+  int32_t zlevel_count;
 };
 
 struct _openslide_level {
@@ -83,6 +88,12 @@ struct _openslide_level {
   // all levels must set these, or none
   int64_t tile_w;
   int64_t tile_h;
+};
+
+struct _openslide_zlevel {
+  double zoffset;
+  int32_t level_count;
+  struct _openslide_level **levels;
 };
 
 /* the function pointer structure for backends */
@@ -130,7 +141,6 @@ extern const struct _openslide_format _openslide_format_hamamatsu_vms_vmu;
 extern const struct _openslide_format _openslide_format_leica;
 extern const struct _openslide_format _openslide_format_mirax;
 extern const struct _openslide_format _openslide_format_philips;
-extern const struct _openslide_format _openslide_format_sakura;
 extern const struct _openslide_format _openslide_format_trestle;
 extern const struct _openslide_format _openslide_format_ventana;
 

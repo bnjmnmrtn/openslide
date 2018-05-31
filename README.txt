@@ -1,3 +1,18 @@
+OpenSlideZ
+
+Benjamin Martin
+
+============================
+This is a fork fo the openslide library in order to support multiple zlevels within a single file.
+It also makes some performance improvements involving caching and reduces instability when serving 
+several thousand images simultaneously.
+
+
+
+Openslide Documentation
+=======================
+
+
 OpenSlide
 
 Carnegie Mellon University and others
@@ -157,3 +172,21 @@ make install
 autoconf, automake, libtool, and pkg-config and run "autoreconf -i".)
 
 Good luck!
+
+
+How to build python?
+====================
+
+From the python directory run 
+
+python setup.py bdist
+
+
+How to test?
+============
+
+After building a program ./test/zstack will be generated.  Run this and pass in a file 
+to test.  It will attempt to load it and output a description of the image.
+
+In order to run the python unit tests, navigate to the Python directory
+pytest openslide_zstack/tests/

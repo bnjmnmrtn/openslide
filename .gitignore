@@ -7,6 +7,7 @@
 *.exe
 *.manifest
 *.rc
+*.pyc
 
 .dirstamp
 
@@ -47,7 +48,12 @@ Makefile.in
 /test/query
 /test/test
 /test/try_open
+/test/zstack
 
 /doc/html
 /doc/latex
 /doc/man
+
+/python/build
+/python/dist
+python/openslide_zstack.egg-info

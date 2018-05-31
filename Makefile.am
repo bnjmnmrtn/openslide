@@ -18,6 +18,8 @@ src_libopenslide_la_LIBADD = $(GLIB2_LIBS) $(CAIRO_LIBS) $(SQLITE3_LIBS) \
 
 src_libopenslide_la_SOURCES = \
 	src/openslide.c \
+	src/openslide-zstack.c \
+	src/openslide-zstack-private.c \
 	src/openslide-cache.c \
 	src/openslide-decode-gdkpixbuf.c \
 	src/openslide-decode-jp2k.c \
@@ -71,6 +73,7 @@ src_libopenslide_la_LDFLAGS = -version-info 4:1:4 -no-undefined
 
 pkginclude_HEADERS = \
 	src/openslide.h \
+	src/openslide-zstack.h \
 	src/openslide-features.h
 
 noinst_HEADERS = \
@@ -86,7 +89,8 @@ noinst_HEADERS = \
 	src/openslide-decode-xml.h \
 	src/openslide-error.h \
 	src/openslide-hash.h \
-	src/openslide-private.h
+	src/openslide-private.h \
+	src/openslide-zstack-private.h
 
 
 # common program code
@@ -106,7 +110,7 @@ COMMON_LDADD = common/libopenslide-common.a src/libopenslide.la $(GLIB2_LIBS)
 # test
 
 noinst_PROGRAMS = test/test test/try_open test/parallel test/query \
-	test/extended test/mosaic test/profile
+	test/extended test/mosaic test/profile test/zstack
 noinst_SCRIPTS = test/driver
 CLEANFILES += test/driver
 EXTRA_DIST += test/driver.in
@@ -115,6 +119,11 @@ test_test_CPPFLAGS = $(COMMON_CPPFLAGS) $(CAIRO_CFLAGS) $(VALGRIND_CFLAGS)
 test_test_CFLAGS = $(AM_CFLAGS) $(TEST_CFLAGS)
 # VALGRIND_LIBS not needed
 test_test_LDADD = $(COMMON_LDADD) $(CAIRO_LIBS)
+
+test_zstack_CPPFLAGS = $(COMMON_CPPFLAGS) $(CAIRO_CFLAGS) $(VALGRIND_CFLAGS)
+test_zstack_CFLAGS = $(AM_CFLAGS) $(TEST_CFLAGS)
+# VALGRIND_LIBS not needed
+test_zstack_LDADD = $(COMMON_LDADD) $(CAIRO_LIBS)
 
 test_try_open_CPPFLAGS = $(COMMON_CPPFLAGS)
 test_try_open_CFLAGS = $(AM_CFLAGS) $(TEST_CFLAGS)
