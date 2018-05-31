@@ -5,7 +5,7 @@ convert = Extension('openslide_zstack._convert', sources=['openslide_zstack/_con
 setup(name='openslide_zstack',
       version='1.1.1',
       description='zstack enabled openslide bindings',
-      url='https://gitlab.com/techcyte/openslide-zstack',
+      url='https://github.com/bnjmnmrtn/openslidez',
       author='Benjamin Martin',
       author_email='mbenja.086@gmail.com',
       license='MIT',
