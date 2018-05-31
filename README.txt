@@ -3,7 +3,7 @@ OpenSlideZ
 Benjamin Martin
 
 ============================
-This is a fork fo the openslide library in order to support multiple zlevels within a single file.
+This is a fork of the openslide library in order to support multiple zlevels within a single file.
 It also makes some performance improvements involving caching and reduces instability when serving 
 several thousand images simultaneously.
 
